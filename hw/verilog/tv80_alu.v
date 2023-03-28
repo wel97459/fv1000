@@ -21,7 +21,7 @@
 // CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+`timescale 1ns/1ps
 module tv80_alu (/*AUTOARG*/
   // Outputs
   Q, F_Out, 
@@ -58,7 +58,7 @@ module tv80_alu (/*AUTOARG*/
     input Sub;
     input Carry_In;
     begin
-      AddSub4 = { 1'b0, A } + { 1'b0, (Sub)?~B:B } + Carry_In;
+      AddSub4 = { 1'b0, A } + { 1'b0, (Sub)?~B:B } + { 4'b0000,Carry_In};
     end
   endfunction // AddSub4
   
@@ -68,7 +68,7 @@ module tv80_alu (/*AUTOARG*/
     input Sub;
     input Carry_In;
     begin
-      AddSub3 = { 1'b0, A } + { 1'b0, (Sub)?~B:B } + Carry_In;
+      AddSub3 = { 1'b0, A } + { 1'b0, (Sub)?~B:B } + { 2'b00,Carry_In};
     end
   endfunction // AddSub4
 

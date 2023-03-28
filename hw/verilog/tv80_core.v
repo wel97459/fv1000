@@ -21,13 +21,13 @@
 // CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+`timescale 1ns/1ps
 module tv80_core (/*AUTOARG*/
   // Outputs
   m1_n, iorq, no_read, write, rfsh_n, halt_n, busak_n, A, data_o, mc, ts, 
   intcycle_n, IntE, stop, 
   // Inputs
-  reset_n, clk, cen, wait_n, int_n, nmi_n, busrq_n, dinst, data_i
+  reset_n, clk, cen, wait_n, int_n, nmi_n, busrq_n, dinst, di
   );
   // Beginning of automatic inputs (from unused autoinst inputs)
   // End of automatics
@@ -59,7 +59,7 @@ module tv80_core (/*AUTOARG*/
   output    busak_n;            
   output [15:0] A; 
   input [7:0]   dinst;  
-  input [7:0]   data_i;     
+  input [7:0]   di;     
   output [7:0]  data_o;     
   output [6:0]  mc;     
   output [6:0]  ts;     
@@ -943,7 +943,7 @@ module tv80_core (/*AUTOARG*/
           RegWEL = 1'b1;
         end
 
-      if (IncDec_16[2] == 1'b1 && ((tstate[2] && wait_n == 1'b1 && mcycle != 3'b001) || (tstate[3] && mcycle[0])) ) 
+      if (IncDec_16[2] == 1'b1 && ((tstate[2] && wait_n == 1'b1 && mcycle != 7'b0000001) || (tstate[3] && mcycle[0])) ) 
         begin
           case (IncDec_16[1:0])
             2'b00 , 2'b01 , 2'b10 :
@@ -973,7 +973,7 @@ module tv80_core (/*AUTOARG*/
           RegDIH = RegBusA_r[15:8];
           RegDIL = RegBusA_r[7:0];
         end
-      else if (IncDec_16[2] == 1'b1 && ((tstate[2] && mcycle != 3'b001) || (tstate[3] && mcycle[0])) ) 
+      else if (IncDec_16[2] == 1'b1 && ((tstate[2] && mcycle != 7'b0000001) || (tstate[3] && mcycle[0])) ) 
         begin
           RegDIH = ID16[15:8];
           RegDIL = ID16[7:0];
@@ -1101,11 +1101,11 @@ module tv80_core (/*AUTOARG*/
 `endif  
 
   always @(/*AUTOSENSE*/BusAck or Halt_FF or I_DJNZ or IntCycle
-           or IntE_FF1 or data_i or iorq_i or mcycle or tstate)
+           or IntE_FF1 or di or iorq_i or mcycle or tstate)
     begin
       mc = mcycle;
       ts = tstate;
-      DI_Reg = data_i;
+      DI_Reg = di;
       halt_n = ~ Halt_FF;
       busak_n = ~ BusAck;
       intcycle_n = ~ IntCycle;
@@ -1242,7 +1242,7 @@ module tv80_core (/*AUTOARG*/
                           if (NextIs_XY_Fetch == 1'b1 ) 
                             begin
                               mcycle <= #1 7'b0100000;
-                              Pre_XY_F_M <= #1 mcycle;
+                              Pre_XY_F_M <= mcycle[2:0];
                               if (IR == 8'b00110110 && Mode == 0 ) 
                                 begin
                                   Pre_XY_F_M <= #1 3'b010;
