@@ -1,0 +1,6 @@
+[submodule "Colorlight_v8.0_ECP5_Make"]
+	path = Colorlight_v8.0_ECP5_Make
+	url = git@github.com:wel97459/Colorlight_v8.0_ECP5_Make.git
+[submodule "hw/spinal/MySpinalHardware"]
+	path = hw/spinal/MySpinalHardware
+	url = git@github.com:wel97459/MySpinalHardware.git

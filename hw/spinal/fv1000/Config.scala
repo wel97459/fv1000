@@ -1,15 +1,15 @@
-package projectname
+package testing
 
 import spinal.core._
 import spinal.core.sim._
 
-object Config {
+object Config_ECP5 {
   def spinal = SpinalConfig(
-    targetDirectory = "hw/gen",
+    targetDirectory = "./Colorlight_v8.0_ECP5/gen",
+    device = Device.LATTICE,
     defaultConfigForClockDomains = ClockDomainConfig(
-      resetActiveLevel = HIGH
-    ),
-    onlyStdLogicVectorAtTopLevelIo = true
+      resetKind = SYNC
+    )
   )
 
   def sim = SimConfig.withConfig(spinal).withFstWave
