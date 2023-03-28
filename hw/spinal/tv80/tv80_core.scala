@@ -16,7 +16,7 @@ class tv80_core extends BlackBox{
         val nmi_n = in Bool()              
         val busrq_n = in Bool()            
         val dinst = in Bits(8 bits)  
-        val data_i = in Bits(8 bits)  
+        val di = in Bits(8 bits)  
 
         val m1_n = out Bool()               
         val iorq = out Bool()               
@@ -44,7 +44,7 @@ class tv80_core extends BlackBox{
     addRTLPath("./hw/verilog/tv80_reg.v")                         // Add a verilog file
 }
 
-class vt80_test extends Component
+class tv80 extends Component
 {
     val io = new Bundle()
     {               
@@ -71,6 +71,7 @@ class vt80_test extends Component
         val IntE = out Bool()           
         val stop = out Bool()  
     }
+
     val tv80 = new tv80_core()
     io.cen <> tv80.io.cen
     io.wait_n <> tv80.io.wait_n
@@ -78,7 +79,6 @@ class vt80_test extends Component
     io.nmi_n <> tv80.io.nmi_n
     io.busrq_n <> tv80.io.busrq_n
     io.dinst <> tv80.io.dinst
-    io.data_i <> tv80.io.data_i
     io.m1_n <> tv80.io.m1_n
     io.iorq <> tv80.io.iorq
     io.no_read <> tv80.io.no_read
@@ -93,12 +93,14 @@ class vt80_test extends Component
     io.intcycle_n <> tv80.io.intcycle_n
     io.IntE <> tv80.io.IntE
     io.stop <> tv80.io.stop 
+    val di_reg = RegNextWhen(io.dinst, io.wait_n && tv80.io.ts(2)) init(0)
+    tv80.io.di <> di_reg
 }
 
 object tv80_core_Sim {
 	def main(args: Array[String]) {
 		SimConfig.withFstWave.compile{
-			val dut = new vt80_test()
+			val dut = new tv80()
 			dut
 		}.doSim{dut =>
 			//Fork a process to generate the reset and the clock on the dut
@@ -111,4 +113,8 @@ object tv80_core_Sim {
 			}
 		}
 	}
+}
+
+object sim_tv80_Verilog extends App {
+  Config_TV80.spinal.generateVerilog(new tv80())
 }

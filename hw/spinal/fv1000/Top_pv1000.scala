@@ -1,11 +1,11 @@
-package testing
+package fv1000
 
 import spinal.core._
 import spinal.lib._
 import spinal.lib.blackbox.lattice.ice40._
 import MySpinalHardware._
 
-class Top_pv1000 extends Component{
+class Top_fv1000 extends Component{
     val io = new Bundle{
         val reset_ = in Bool()
         val clk_25Mhz = in Bool() //12Mhz CLK
@@ -37,7 +37,7 @@ class Top_pv1000 extends Component{
 
     val Core18 = new ClockingArea(clk18Domain) {
         val areaDiv4 = new SlowArea(4) {
-            val pv = new pv1000()
+            val pv = new pv1000_gfx()
             io.sync := pv.io.CompSync_
             io.video := pv.io.Pixel ? B"10" | B"00"
         }
@@ -146,6 +146,6 @@ class Top_pv1000 extends Component{
 }
 
 
-object Top_pv1000_ECP5_Verilog extends App {
-  Config_ECP5.spinal.generateVerilog(new Top_pv1000())
+object Top_fv1000_ECP5_Verilog extends App {
+  Config_ECP5.spinal.generateVerilog(new Top_fv1000())
 }
